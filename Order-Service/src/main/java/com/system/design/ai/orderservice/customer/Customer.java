@@ -1,19 +1,26 @@
 package com.system.design.ai.orderservice.customer;
 
+import com.system.design.ai.orderservice.Auditable;
+import com.system.design.ai.orderservice.address.Address;
 import jakarta.persistence.*;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.hibernate.annotations.processing.Pattern;
+import jakarta.validation.constraints.Pattern;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Entity
 @Table(name = "customer")
-public class Customer {
+public class Customer extends Auditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "First name is required")
@@ -24,6 +31,7 @@ public class Customer {
 
     @Email(message = "Email should be valid")
     @NotBlank(message = "Email is required")
+    @NotNull
     @Column(unique = true)
     private String email;
 
@@ -31,8 +39,13 @@ public class Customer {
     @NotBlank(message = "Mobile number is required")
     private String mobile;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
-    @Size(min = 1, message = "At least one address is required")
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Address> addresses;
+
+    @Column(name = "is_deleted")
+    private boolean deleted = false;
+
+    public Customer() {
+        addresses = new ArrayList<>();
+    }
 }

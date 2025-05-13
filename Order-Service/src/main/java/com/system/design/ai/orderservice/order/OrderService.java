@@ -1,11 +1,14 @@
 package com.system.design.ai.orderservice.order;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface OrderService {
-    Order createOrder(Order order);
+    OrderResponseDTO createOrder(OrderRequestDTO orderRequestDTO);
 
-    Order updateOrderStatus(Long id, OrderStatus status);
+    OrderResponseDTO updateOrderStatus(ChangeStatusRequestDTO changeStatusRequestDTO);
 
     BigDecimal calculateTotalOrderValue(Long customerId);
+
+    List<OrderResponseDTO> getAllOrders(Long customerId);
 }

@@ -1,16 +1,19 @@
-package com.system.design.ai.orderservice.customer;
+package com.system.design.ai.orderservice.address;
 
+import com.system.design.ai.orderservice.Auditable;
+import com.system.design.ai.orderservice.customer.Customer;
 import jakarta.persistence.*;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 @Entity
 @Table(name = "address")
-public class Address {
+public class Address extends Auditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "Street is required")
@@ -29,4 +32,7 @@ public class Address {
     private String country;
 
     private String landmark;
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 }

@@ -5,11 +5,13 @@ import com.system.design.ai.orderservice.order.Order;
 
 import java.util.List;
 
-@Component
-public interface CustomerService {
-    Customer createCustomer(Customer customer);
 
-    Customer getCustomer(Long id);
+public interface CustomerService {
+    CustomerResponseDTO createCustomer(CustomerRequestDTO customer);
+
+    CustomerResponseDTO getCustomer(Long id);
 
     List<Order> getOrdersByCustomerId(Long id);
+
+    void deleteCustomer(Long id);
 }

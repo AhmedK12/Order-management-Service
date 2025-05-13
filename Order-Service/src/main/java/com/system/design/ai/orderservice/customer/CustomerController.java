@@ -1,5 +1,6 @@
 package com.system.design.ai.orderservice.customer;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,18 +17,24 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    @PostMapping
-    public ResponseEntity<Customer> createCustomer(@Valid @RequestBody Customer customer) {
+    @PostMapping("/create")
+    public ResponseEntity<CustomerResponseDTO> createCustomer(@Valid @RequestBody CustomerRequestDTO customer) {
         return ResponseEntity.status(HttpStatus.CREATED).body(customerService.createCustomer(customer));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomer(@PathVariable Long id) {
+    public ResponseEntity<CustomerResponseDTO> getCustomer(@PathVariable Long id) {
         return ResponseEntity.ok(customerService.getCustomer(id));
     }
 
     @GetMapping("/{id}/orders")
     public ResponseEntity<List<Order>> getCustomerOrders(@PathVariable Long id) {
         return ResponseEntity.ok(customerService.getOrdersByCustomerId(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
+        customerService.deleteCustomer(id);
+        return ResponseEntity.noContent().build();
     }
 }
