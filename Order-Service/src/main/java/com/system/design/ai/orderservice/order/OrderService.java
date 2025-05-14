@@ -6,7 +6,7 @@ import java.util.List;
 public interface OrderService {
     OrderResponseDTO createOrder(OrderRequestDTO orderRequestDTO);
 
-    OrderResponseDTO updateOrderStatus(ChangeStatusRequestDTO changeStatusRequestDTO);
+    OrderResponseDTO updateOrderStatus(Long orderId, OrderStatus status);
 
     BigDecimal calculateTotalOrderValue(Long customerId);
 

@@ -40,32 +40,29 @@ public class OrderServiceImpl implements OrderService {
         if(customerRepository.findById(orderRequest.customerId()).isEmpty()) {
             throw new ResourceNotFoundException("Customer not found");
         }
-
         Order order = orderMapper.toEntity(orderRequest);
         if (order.getItems() != null) {
-            for (OrderItem item : order.getItems()) {
-                item.setOrder(order); // this is the missing link!
-            }
+            Optional.of(order.getItems())
+                    .ifPresent(items -> items.forEach(item -> item.setOrder(order)));
+
         }
         Order savedOrder = orderRepository.save(order);
         logger.debug("Order saved with ID: {} and {} items", savedOrder.getId(), order.getItems().size());
-
         return orderMapper.toResponseDTO(savedOrder);
     }
 
     @Transactional
     @Override
-    public OrderResponseDTO updateOrderStatus(ChangeStatusRequestDTO dto) {
-        logger.info("Updating order status. OrderId: {}, NewStatus: {}", dto.orderId(), dto.orderStatus());
+    public OrderResponseDTO updateOrderStatus(Long orderId, OrderStatus status) {
+        logger.info("Updating order status. OrderId: {}, NewStatus: {}", orderId, status);
 
-        Order order = orderRepository.findById(dto.orderId())
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> {
-                    logger.error("Order not found for id: {}", dto.orderId());
+                    logger.error("Order not found for id: {}", orderId);
                     return new ResourceNotFoundException("Order is not exit");
                 });
 
-        order.setStatus(dto.orderStatus());
-        order.setVersion(dto.version());
+        order.setStatus(status);
         Order updatedOrder = null;
         try {
              updatedOrder = orderRepository.save(order);
@@ -73,7 +70,7 @@ public class OrderServiceImpl implements OrderService {
             throw new OptimisticLockException("The order was updated by another user, please reload the order and try again.");
         }
 
-        logger.debug("Order ID {} status updated to {}", dto.orderId(), dto.orderStatus());
+        logger.debug("Order ID {} status updated to {}", orderId, status);
         return orderMapper.toResponseDTO(updatedOrder);
     }
 

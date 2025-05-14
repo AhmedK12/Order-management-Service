@@ -31,12 +31,12 @@ public class OrderController {
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<OrderResponseDTO> updateStatus(@RequestBody @Valid ChangeStatusRequestDTO dto) {
-        logger.info("Received request to update order ID: {} to status: {}", dto.orderId(), dto.orderStatus());
+    public ResponseEntity<OrderResponseDTO> updateStatus(@PathVariable Long id, @RequestParam OrderStatus status ) {
+        logger.info("Received request to update order ID: {} to status: {}", id, status);
 
-        OrderResponseDTO response = orderService.updateOrderStatus(dto);
+        OrderResponseDTO response = orderService.updateOrderStatus(id, status);
 
-        logger.info("Order ID: {} status updated to: {}", dto.orderId(), response.status());
+        logger.info("Order ID: {} status updated to: {}", id, response.status());
         return ResponseEntity.ok(response);
     }
 
